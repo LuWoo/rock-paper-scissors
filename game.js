@@ -1,4 +1,5 @@
-const choice = ["rock", "paper", "scissors"]
+const choice = ["rock", "paper", "scissors"];
+var scores = [0,0]; //[Player, Computer]
 
 function computerPlay() {
     var computerSelectionNumber = Math.floor(Math.random() * 3);
@@ -6,11 +7,39 @@ function computerPlay() {
 }
 
 function playerWins(computerSelectionNumber, playerSelectionNumber) {
-    console.log(`You win! ${choice[playerSelectionNumber]} beats ${choice[computerSelectionNumber]}`)
+    score("player");
+    outcomeText(`You win! ${choice[playerSelectionNumber]} beats ${choice[computerSelectionNumber]}`)
 }
 
 function playerLoses(computerSelectionNumber, playerSelectionNumber) {
-    console.log(`You lose! ${choice[playerSelectionNumber]} loses to ${choice[computerSelectionNumber]}`)
+    score("comp");
+    outcomeText(`You lose! ${choice[playerSelectionNumber]} loses to ${choice[computerSelectionNumber]}`)
+}
+
+function score(winner) {
+    if (winner=="comp") {
+        scores[1]+=1;
+    }
+    else if (winner=="player") {
+        scores[0]+=1;
+    }
+    else {
+        return
+    }
+    const scoresParagraph = document.querySelector('#scores');
+    scoresText = `You: ${scores[0]}     Computer: ${scores[1]}`;
+    scoresParagraph.textContent = scoresText;
+    if (scores.some(el => el > 4)) {
+        const final = document.querySelector('#final-result');
+        final.textContent = `The winner is: ${winner}!`;
+        scores = [0,0]
+    }
+}
+
+function outcomeText(textToShow) {
+    const outcomeParagraph = document.querySelector('#outcome');
+
+    outcomeParagraph.textContent = textToShow;
 }
 
 function playGame(playerSelection, computerSelectionNumber) {
@@ -24,7 +53,7 @@ function playGame(playerSelection, computerSelectionNumber) {
     }
 
     if (playerSelectionNumber == computerSelectionNumber) {
-        console.log(`It's a draw! You both chose ${choice[playerSelectionNumber]}`)
+        outcomeText(`It's a draw! You both chose ${choice[playerSelectionNumber]}`)
     } else if (playerSelectionNumber == 0) {
         if (computerSelectionNumber == 1) {
             playerLoses(computerSelectionNumber, playerSelectionNumber)
@@ -47,11 +76,10 @@ function playGame(playerSelection, computerSelectionNumber) {
 
 }
 
-function game() {
-    for (let i = 0; i < 5; i++) {
-        var playerSelection = prompt("Make a choice!").toLowerCase();
-        playGame(playerSelection, computerPlay());
-    }
-}
+const buttons = document.querySelectorAll('button');
 
-game()
+buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+        playGame(button.id, computerPlay());
+    })
+})
